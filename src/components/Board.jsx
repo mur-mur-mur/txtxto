@@ -11,7 +11,6 @@ export default function Board() {
     oCount,
     xCount
   } = useGameContext();
-
   function handleBoardReset() {
     resetBoard();
   }

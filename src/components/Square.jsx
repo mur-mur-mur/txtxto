@@ -1,6 +1,7 @@
 import { useGameContext } from '../context/GameContext';
+import './square.css';
 
-export default function Square({ square }) {
+export default function Square(square) {
   
   const {
     active,
@@ -9,7 +10,7 @@ export default function Square({ square }) {
     turn
   } = useGameContext();
 
-  const handleSquareClick = () => {
+  const handleSquareClick = (square) => {
     if (square.ltr) return;
     if (!active) return;
     square.ltr = turn;

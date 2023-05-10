@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export default function useBoard() {
+export function useBoard() {
   const initialState = new Array(9)
     .fill('')
     .map((val, idx) => {
@@ -17,5 +17,5 @@ export default function useBoard() {
     }
     loadBoard(initialState);
   }, [initialState]);
-  return initialState;
+  return { initialState };
 }

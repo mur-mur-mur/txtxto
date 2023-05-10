@@ -1,31 +1,12 @@
 import { useGameContext } from '../context/GameContext';
-import './square.css';
 
-export default function Square(square) {
-  
-  const {
-    active,
-    board,
-    setBoard,
-    turn
-  } = useGameContext();
-
-  const handleSquareClick = (square) => {
-    if (square.ltr) return;
-    if (!active) return;
-    square.ltr = turn;
-    const newBoardState = [...board];
-    setBoard(newBoardState);
-  };
-
+export default function Square({ index, value }) {
+  const { handleClick } = useGameContext();
   return (
     <>
-      <div
-        onClick={ handleSquareClick }
-        className="square"
-      >
-        { square.ltr }
-      </div>
+      <article onClick={ () => handleClick(index) } id={ index } className="square">
+        { value }
+      </article>
     </>
   );
 }

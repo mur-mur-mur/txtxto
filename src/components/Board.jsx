@@ -2,36 +2,21 @@ import { useGameContext } from '../context/GameContext';
 import Square from './Square';
 
 export default function Board() {
-  const {
-    board,
-    message,
-    active,
-    resetGame,
-    resetBoard,
-    oCount,
-    xCount
-  } = useGameContext();
-  function handleBoardReset() {
-    resetBoard();
-  }
+  const { message, board, gameReset, active } = useGameContext();
 
-  function handleGameReset() {
-    resetGame();
-  }
-
-
+  const handleReset = () => {
+    gameReset();
+  };
 
   return (
     <>
-      <p>{ `Score: x has won ${ xCount } games! o has won ${ oCount } games!`}</p>
       <p>{ message }</p>
       <div className="board">
-        {
-          board.map((space) => <Square key={ space.idx } { ...{ space } } />)
-        }
+        { board.map(({ val, idx }) => (
+          <Square key={ idx } index={ idx } value={ val } />
+        )) }
       </div>
-      { !active && <button onClick={ handleBoardReset }>reset</button> }
-      { !active && <button onClick={ handleGameReset }>restart games</button> }
+      { !active && <button onClick={ handleReset }>reset</button> }
     </>
   );
 }

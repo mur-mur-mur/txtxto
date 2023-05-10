@@ -1,151 +1,134 @@
-import { useState, createContext, useContext } from 'react';
-import { useBoard } from '../hooks/useBoard';
+import { useContext, createContext, useState } from 'react';
 
 const GameContext = createContext();
 
 export function GameContextProvider({ children }) {
-  
-  const { initialState } = useBoard();
-  console.log(initialState);
-  const [board, setBoard] = useState(initialState);
-  console.log(board);
-  const [turn, setTurn] = useState('x');
-  const [message, setMessage] = useState(`${turn}'s move`);
-  const [active, setActive] = useState(true);
-  const [oCount, setOCount] = useState(0);
-  const [xCount, setXCount] = useState(0);
 
-  function handleClick(square) {
+  const newBoard = new Array(9).fill().map(
+    // eslint-disable-next-line no-unused-vars
+    (val, idx) => (
+      { idx, val: '' }
+    ));
+  const [turn, setTurn] = useState('x');
+  const [board, setBoard] = useState(newBoard);
+  const [active, setActive] = useState(true);
+  const [message, setMessage] = useState(`${turn}'s turn`);
+
+  function handleClick(i) {
     if (!active) return;
-    if (board[square] !== '') return;
-    setBoard(
-      spaces => spaces.map(
-        space => space.idx === square ?
-          { idx: square, ltr: setTurn } : square
-      )
-    );
+    if (board[i].val !== '') return;
+
+    setBoard(x =>
+      x.map(
+        space => space.idx === i ?
+          { idx: i, val: turn } : space));
+    
     setTurn(turn === 'x' ? 'o' : 'x');
-    setMessage(turn === 'x' ? 'o' : 'x');
+    setMessage(turn === 'x' ? 'o goes' : 'x goes');
   }
-  
+
   function checkWinner() {
     if (
-      board[0].ltr !== '' &&
-        board[0].ltr ===
-        board[1].ltr &&
-        board[1].ltr ===
-        board[2].ltr
+      board[0].val !== '' &&
+      board[0].val ===
+      board[1].val &&
+      board[1].val ===
+      board[2].val
     ) {
-      return board[2].ltr;
+      return board[2].val;
     } else if (
-      board[3].ltr !== '' &&
-        board[3].ltr ===
-        board[4].ltr &&
-        board[4].ltr ===
-        board[5].ltr
+      board[3].val !== '' &&
+      board[3].val ===
+      board[4].val &&
+      board[4].val ===
+      board[5].val
     ) {
-      return board[5].ltr;
+      return board[5].val;
     } else if (
-      board[6].ltr !== '' &&
-        board[6].ltr ===
-        board[7].ltr &&
-        board[7].ltr ===
-        board[8].ltr
+      board[6].val !== '' &&
+      board[6].val === 
+      board[7].val &&
+      board[7].val === 
+      board[8].val
     ) {
-      return board[8].ltr;
+      return board[8].val;
     } else if (
-      board[0].ltr !== '' &&
-        board[0].ltr ===
-        board[3].ltr &&
-        board[3].ltr ===
-        board[6].ltr
+      board[0].val !== '' &&
+      board[0].val === 
+      board[3].val &&
+      board[3].val === 
+      board[6].val
     ) {
-      return board[6].ltr;
+      return board[6].val;
     } else if (
-      board[1].ltr !== '' &&
-        board[1].ltr ===
-        board[4].ltr &&
-        board[4].ltr ===
-        board[7].ltr
+      board[1].val !== '' &&
+      board[1].val === 
+      board[4].val &&
+      board[4].val === 
+      board[7].val
     ) {
-      return board[7].ltr;
+      return board[7].val;
     } else if (
-      board[2].ltr !== '' &&
-        board[2].ltr ===
-        board[5].ltr &&
-        board[5].ltr ===
-        board[8].ltr
+      board[2].val !== '' &&
+      board[2].val === 
+      board[5].val &&
+      board[5].val === 
+      board[8].val
     ) {
-      return board[8].ltr;
+      return board[8].val;
     } else if (
-      board[0].ltr !== '' &&
-        board[0].ltr ===
-        board[4].ltr &&
-        board[4].ltr ===
-        board[8].ltr
+      board[0].val !== '' &&
+      board[0].val === 
+      board[4].val &&
+      board[4].val === 
+      board[8].val
     ) {
-      return board[8].ltr;
+      return board[8].val;
     } else if (
-      board[2].ltr !== '' &&
-        board[2].ltr ===
-        board[4].ltr &&
-        board[4].ltr ===
-        board[6].ltr
+      board[2].val !== '' &&
+      board[2].val === 
+      board[4].val &&
+      board[4].val === 
+      board[6].val
     ) {
-      return board[6].ltr;
+      return board[6].val;
     } else {
       return false;
     }
   }
 
-  function catsGame() {
-    return board.filter(square => square.ltr === '').length === 0;
+  function cat() {
+    return board.filter(square => square.val === '').length === 0;
   }
 
   function checkGame() {
     if (!active) return;
     const winner = checkWinner();
     if (winner) {
+      setMessage(`${winner} wins`);
       setActive(false);
-      setMessage(`${winner} has won the game!}`);
-      if (winner === 'x') {
-        setXCount(xCount + 1);
-      } else {
-        setOCount(oCount + 1);
-      }
+    } else if (cat()) {
+      setMessage('cat game');
+      setActive(false);
     }
   }
-
   checkGame();
 
-  function resetBoard() {
-    setTurn('x');
-    setMessage(`${turn}'s turn`);
-    setBoard(initialState);
+  function gameReset() {
+    setBoard(newBoard);
     setActive(true);
-  }
-
-  function resetGame() {
-    resetBoard();
-    setXCount(0);
-    setOCount(0);
+    setMessage(`${turn}'s turn`);
+    setTurn('x');
   }
 
   return (
     <GameContext.Provider value={ {
-      resetGame,
-      resetBoard,
-      catsGame,
-      checkWinner,
-      handleClick,
       board,
-      setBoard,
       turn,
-      setTurn,
-      message,
-      setMessage,
       active,
-      setActive
+      message,
+      handleClick,
+      gameReset
     } }>
       { children }
     </GameContext.Provider>
@@ -155,7 +138,7 @@ export function GameContextProvider({ children }) {
 export function useGameContext() {
   const context = useContext(GameContext);
   if (context === undefined) {
-    throw new Error('useGameContext must be used within a provider!');
+    throw new Error('useGameContext must be used within a provider');
   }
   return context;
 }

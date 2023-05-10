@@ -12,7 +12,7 @@ export function GameContextProvider({ children }) {
   const [turn, setTurn] = useState('x');
   const [board, setBoard] = useState(newBoard);
   const [active, setActive] = useState(true);
-  const [message, setMessage] = useState(`${turn}'s turn`);
+  const [message, setMessage] = useState(`x's turn`);
 
   function handleClick(i) {
     if (!active) return;
